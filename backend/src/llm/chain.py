@@ -1,14 +1,16 @@
 from langchain_community.llms import Ollama
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from typing import List, Optional
+from typing import List, Optional, Deque
+from collections import deque
 import aiohttp
 from .config import OllamaConfig
 
 class LangChainManager:
-    def __init__(self, config: Optional[OllamaConfig] = None):
+    def __init__(self, config: Optional[OllamaConfig] = None, buffer_size: int = 5):
         self.config = config or OllamaConfig()
         self.llm = self._setup_llm()
+        self.conversation_buffer: Deque[str] = deque(maxlen=buffer_size)
     
     def _setup_llm(self) -> Ollama:
         """Initialize the Ollama LLM with configuration"""
@@ -22,13 +24,22 @@ class LangChainManager:
         )
     
     async def generate_response(self, prompt: str) -> str:
-        """Generate a response using the LLM"""
+        """Generate a response using the LLM with conversation history"""
         if not prompt.strip():
             raise ValueError("Prompt cannot be empty")
             
+      
+        self.conversation_buffer.append(prompt)
+        
+        #
+        context = "\n".join(self.conversation_buffer)
+        
         try:
-            response = await self.llm.agenerate([prompt])
-            return response.generations[0][0].text
+            response = await self.llm.agenerate([context])
+            response_text = response.generations[0][0].text
+            
+            self.conversation_buffer.append(response_text)
+            return response_text
         except aiohttp.ClientError as e:
             raise ConnectionError(f"Failed to connect to Ollama server: {str(e)}")
         except Exception as e:

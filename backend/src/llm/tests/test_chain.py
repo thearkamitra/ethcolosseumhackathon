@@ -1,7 +1,9 @@
 import asyncio
-from .chain import LangChainManager
-from .config import OllamaConfig
+from ..chain import LangChainManager
+from ..config import OllamaConfig
+import pytest
 
+@pytest.mark.asyncio
 async def test_llm_integration():
     print("Testing LangChain integration with llama2...")
     
@@ -28,6 +30,21 @@ async def test_llm_integration():
         response2 = await manager.generate_response(prompt2)
         print(f"Prompt: {prompt2}")
         print(f"Response: {response2}")
+        
+        # Test 4: Empty prompt (should raise error)
+        print("\n4. Testing empty prompt handling...")
+        try:
+            await manager.generate_response("")
+            print("Warning: Empty prompt did not raise an error as expected")
+        except ValueError as e:
+            print(f"Successfully caught empty prompt error: {str(e)}")
+        
+        # Test 5: Long prompt
+        print("\n5. Testing long prompt...")
+        prompt3 = "Write a short story about a robot learning to paint." * 3
+        response3 = await manager.generate_response(prompt3)
+        print(f"Prompt length: {len(prompt3)} characters")
+        print(f"Response length: {len(response3)} characters")
         
     except Exception as e:
         print(f"\nError during testing: {str(e)}")
