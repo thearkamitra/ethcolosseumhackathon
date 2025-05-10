@@ -1,0 +1,32 @@
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8000"  # Changed from 8000:8000 to 8080:8000
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434  # Internal port remains 11434
+    depends_on:
+      - ollama
+    volumes:
+      - backend_data:/app
+    networks:
+      - app-network
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11436:11434"  # Changed to use port 11436 on host
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - app-network
+
+volumes:
+  ollama_data:
+  backend_data:
+
+networks:
+  app-network:
+    driver: bridge
