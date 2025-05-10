@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 214 80% 36%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 172 76% 40%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    /* Updated sidebar colors for better contrast */
+    --sidebar-background: 220 20% 20%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 214 80% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 217 32% 28%;
+    --sidebar-ring: 217 91% 70%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Responsive text utilities */
+.text-responsive {
+  @apply text-sm sm:text-base;
+}
+
+.heading-responsive {
+  @apply text-xl sm:text-2xl md:text-3xl;
+}
+
+/* Custom shadow for cards */
+.shadow-card {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Hover effect for interactive cards */
+.interactive-card {
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08), 0 3px 3px rgba(0,0,0,0.07);
+}
+
+/* Responsive grid layouts */
+.grid-cards {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4;
+}
+
+.grid-cards-medium {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+/* Responsive spacing */
+.spacing-responsive {
+  @apply p-3 sm:p-4 md:p-6;
+}
+
+.spacing-responsive-y {
+  @apply py-3 sm:py-4 md:py-6;
+}
+
+.spacing-responsive-x {
+  @apply px-3 sm:px-4 md:px-6;
+}
+
+/* Responsive container */
+.container-responsive {
+  @apply w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6;
+}
+
+/* Mobile table fixes */
+.mobile-table {
+  @apply w-full text-left text-sm;
+}
+
+.mobile-table-row {
+  @apply flex flex-col border-b pb-3 mb-3 sm:table-row sm:pb-0 sm:mb-0;
+}
+
+.mobile-table-cell {
+  @apply flex justify-between py-1.5 sm:table-cell sm:py-3;
+}
+
+.mobile-table-cell:before {
+  @apply font-medium content-[attr(data-label)] sm:hidden;
+}
+
+@media (max-width: 640px) {
+  .sm-scroll-container {
+    @apply overflow-x-auto pb-3;
+  }
+  
+  .sm-min-width {
+    @apply min-w-[640px];
+  }
+}
