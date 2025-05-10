@@ -28,7 +28,6 @@ clean:
 # Pull required Ollama models
 pull-models:
 	docker compose exec ollama ollama pull llama2
-	docker compose exec ollama ollama pull whisper
 
 # Download Whisper model
 download-whisper:
