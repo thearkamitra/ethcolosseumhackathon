@@ -10,11 +10,11 @@ from .config import OllamaConfig
 from .tools import get_default_tools
 
 class LangChainManager:
-    def __init__(self, config: Optional[OllamaConfig] = None, buffer_size: int = 5):
+    def __init__(self, config: Optional[OllamaConfig] = None, buffer_size: int = 5, tools: Optional[List] = None):
         self.config = config or OllamaConfig()
         self.llm = self._setup_llm()
         self.conversation_buffer: Deque[str] = deque(maxlen=buffer_size)
-        self.agent = self._setup_agent()
+        self.agent = self._setup_agent(tools)
     
     def _setup_llm(self) -> Ollama:
         """Initialize the Ollama LLM with configuration"""
@@ -27,9 +27,10 @@ class LangChainManager:
             callback_manager=callback_manager
         )
     
-    def _setup_agent(self) -> AgentExecutor:
+    def _setup_agent(self, tools: Optional[List] = None) -> AgentExecutor:
         """Initialize the agent with tools"""
-        tools = get_default_tools()
+        if tools is None:
+            tools = get_default_tools()
         
         prompt = ChatPromptTemplate.from_messages([
             ("system", "You are a helpful AI assistant with access to various tools. Use them when appropriate to help answer questions."),
