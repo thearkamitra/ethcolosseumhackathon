@@ -1,0 +1,67 @@
+{
+    "faqs": [
+      {
+        "question": "What documents are needed to apply for car insurance?",
+        "answer": "You need a valid driver's license, vehicle registration, and a proof of address."
+      },
+      {
+        "question": "How can I file a claim?",
+        "answer": "You can file a claim through our mobile app, website, or by calling our 24/7 claim line."
+      },
+      {
+        "question": "What is the waiting period for health insurance?",
+        "answer": "The waiting period is typically 30 days from the date of policy issuance."
+      },
+      {
+        "question": "Can I add a new driver to my car insurance policy?",
+        "answer": "Yes, you can add a new driver by contacting our customer service."
+      },
+      {
+        "question": "When are you open?",
+        "answer": "We are open Monday to Friday from 9:00 AM to 6:00 PM, and Saturday from 10:00 AM to 2:00 PM. We are closed on Sundays."
+      },
+        {
+            "question": "How can I contact customer service?",
+            "answer": "You can reach us via phone at 1-800-555-0199 or email us at support@example.com."
+        },
+        {
+            "question": "What payment methods do you accept?",
+            "answer": "We accept credit cards, debit cards, and bank transfers."
+        },
+        {
+            "question": "Do you offer discounts for multiple policies?",
+            "answer": "Yes, we offer a 10% discount if you purchase multiple policies with us."
+        },
+        {
+            "question": "How can I update my personal information?",
+            "answer": "You can update your information through our online portal or by contacting customer service."
+        },
+        {
+            "question": "What address should I use for correspondence?",
+            "answer": "Please use our main office address: 123 Insurance Lane, Suite 100, Cityville, ST 12345."
+        }
+    ],
+    "departments": [
+      {
+        "name": "Claims",
+        "specialization": "Handles insurance claims and payouts",
+        "personnel": ["Alice Johnson", "Bob Smith"]
+      },
+      {
+        "name": "Sales",
+        "specialization": "Provides quotes and policy options",
+        "personnel": ["David Lee"]
+      }
+    ],
+    "policies": [
+      {
+        "name": "Comprehensive Car Insurance",
+        "details": "Covers damage to your vehicle, third-party liability, theft, and natural disasters."
+      },
+      {
+        "name": "Health Insurance Basic",
+        "details": "Provides coverage for general physician visits, basic hospitalization, and emergency services."
+      }
+    ]
+  }
+  

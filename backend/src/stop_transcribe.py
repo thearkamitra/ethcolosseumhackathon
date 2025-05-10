@@ -6,6 +6,7 @@ from scipy.io.wavfile import write
 import numpy as np
 import webrtcvad
 from transcription.whisper_manager import WhisperManager
+from src.insurance.insurance_agent import InsuranceAgent
 
 class WhisperTranscriber:
     def __init__(self, model_name="base", sample_rate=16000, chunk_duration=0.5, vad_mode=1, silence_limit=1.0):
@@ -16,6 +17,7 @@ class WhisperTranscriber:
         self.model = None
         self.is_running = False
         self.vad = webrtcvad.Vad(vad_mode)
+        self.insurance_agent = InsuranceAgent()
 
     def initialize(self):
         print(f"Loading Whisper model '{self.model_name}'...")
@@ -73,6 +75,7 @@ class WhisperTranscriber:
                                 print("Recognized:", text)
                                 if callback:
                                     callback(text)
+                                self.insurance_agent.run(text)
                             audio_buffer = []
                             silence_counter = 0
         except KeyboardInterrupt:
