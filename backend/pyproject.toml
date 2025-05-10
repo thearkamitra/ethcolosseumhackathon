@@ -1,0 +1,18 @@
+[project]
+name = "concierge-backend"
+version = "0.1.0"
+description = "Concierge Backend Service"
+requires-python = "==3.10.7"
+dependencies = [
+    "langchain-community",
+    "aiohttp",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+pythonpath = [
+    "src"
+] 
