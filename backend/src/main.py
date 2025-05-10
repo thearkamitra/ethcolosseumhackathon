@@ -3,8 +3,8 @@ import numpy as np
 import wave
 import io
 import time
-from src.llm.chain import LangChainManager
-from src.transcription.whisper_manager import WhisperManager
+from llm.chain import LangChainManager
+from transcription.whisper_manager import WhisperManager
 
 # Initialize managers
 llm_manager = LangChainManager()
@@ -13,8 +13,10 @@ whisper_manager = WhisperManager(model_size="base")
 # Audio recording settings
 SAMPLE_RATE = 16000
 CHANNELS = 1
-SILENCE_THRESHOLD = 0.01  # Adjust this value based on your needs
-SILENCE_DURATION = 1.0  # Duration of silence in seconds to stop recording
+SILENCE_THRESHOLD = 0.005  # Lower threshold to detect silence more easily
+SILENCE_DURATION = 0.3  # Shorter silence duration for more frequent transcription
+MIN_AUDIO_LENGTH = 0.5  # Shorter minimum audio length
+MAX_AUDIO_LENGTH = 5.0  # Maximum audio length before forcing transcription
 
 def chat(message: str):
     """Send a message to the LLM and get a response"""
@@ -46,67 +48,65 @@ def process_audio_stream(audio_queue, callback):
     audio_buffer = []
     silence_counter = 0
     recording = True
+    last_process_time = time.time()
     
     while recording:
         try:
-            print("Waiting for audio data...")
+            print("Waiting for audio data...", end='\r')
             data = audio_queue.get()
-            print(f"Received audio data chunk of size: {len(data)}")
             audio_buffer.extend(data.flatten())
+            current_time = time.time()
             
-            # Check for silence
+            # Check for silence or max length
             if np.abs(data).mean() < SILENCE_THRESHOLD:
                 silence_counter += len(data) / SAMPLE_RATE
-                print(f"Silence detected: {silence_counter:.2f}s")
-                if silence_counter >= SILENCE_DURATION:
-                    print("Processing audio after silence...")
-                    # Convert buffer to WAV format
-                    buffer = io.BytesIO()
-                    with wave.open(buffer, 'wb') as wf:
-                        wf.setnchannels(CHANNELS)
-                        wf.setsampwidth(2)  # 16-bit audio
-                        wf.setframerate(SAMPLE_RATE)
-                        wf.writeframes(np.array(audio_buffer).tobytes())
-                    
-                    print("Sending audio for transcription...")
-                    # Transcribe the audio
-                    result = whisper_manager.transcribe_audio_chunk(buffer.getvalue())
-                    print(f"Transcription result: {result}")
-                    callback(result)
-                    
-                    # Reset buffer and silence counter
-                    audio_buffer = []
-                    silence_counter = 0
-                    print("Reset audio buffer and silence counter")
             else:
                 silence_counter = 0
+            
+            # Process audio if silence detected or max length reached
+            audio_length = len(audio_buffer) / SAMPLE_RATE
+            if ((silence_counter >= SILENCE_DURATION and audio_length >= MIN_AUDIO_LENGTH) or 
+                audio_length >= MAX_AUDIO_LENGTH):
+                print("\nProcessing audio...")
+                # Convert buffer to WAV format
+                buffer = io.BytesIO()
+                with wave.open(buffer, 'wb') as wf:
+                    wf.setnchannels(CHANNELS)
+                    wf.setsampwidth(2)  # 16-bit audio
+                    wf.setframerate(SAMPLE_RATE)
+                    wf.writeframes(np.array(audio_buffer).tobytes())
+                
+                # Transcribe the audio
+                result = whisper_manager.transcribe_audio_chunk(buffer.getvalue())
+                if result and "segments" in result:
+                    for segment in result["segments"]:
+                        print(f"\nTranscription: {segment['text']}")
+                
+                # Reset buffer and silence counter
+                audio_buffer = []
+                silence_counter = 0
+                last_process_time = current_time
                 
         except KeyboardInterrupt:
-            print("Audio processing cancelled")
+            print("\nAudio processing cancelled")
             recording = False
             break
         except Exception as e:
-            print(f"Error processing audio: {str(e)}")
+            print(f"\nError processing audio: {str(e)}")
             break
 
 def audio_callback(indata, frames, time, status, audio_queue):
     """Callback function for audio input"""
     if status:
-        print(f"Audio callback status: {status}")
+        print(f"\nAudio callback status: {status}")
     try:
-        print(f"Audio callback: received {len(indata)} frames")
         audio_queue.put(indata.copy())
     except Exception as e:
-        print(f"Error in audio callback: {str(e)}")
+        print(f"\nError in audio callback: {str(e)}")
 
 if __name__ == "__main__":
     print("Starting audio listening and transcription...")
-    
-    def result_callback(result):
-        print("\nTranscription received:")
-        print(f"Language: {result['language']}")
-        print(f"Text: {result['segments'][0]['text']}")
-        print(f"Confidence: {result['segments'][0]['confidence']:.2f}")
+    print("Speak into your microphone. Press Ctrl+C to stop.")
     
     from queue import Queue
     audio_queue = Queue()
@@ -120,9 +120,8 @@ if __name__ == "__main__":
     try:
         with sd.InputStream(samplerate=SAMPLE_RATE, channels=CHANNELS, callback=callback):
             print("Audio stream started successfully")
-            print("Listening... (Press Ctrl+C to stop)")
-            process_audio_stream(audio_queue, result_callback)
+            process_audio_stream(audio_queue, None)
     except KeyboardInterrupt:
         print("\nStopping audio recording...")
     except Exception as e:
-        print(f"Error: {str(e)}") 
+        print(f"\nError: {str(e)}") 
