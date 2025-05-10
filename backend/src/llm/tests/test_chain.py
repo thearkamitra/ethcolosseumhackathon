@@ -46,6 +46,20 @@ async def test_llm_integration():
         print(f"Prompt length: {len(prompt3)} characters")
         print(f"Response length: {len(response3)} characters")
         
+        # Test 6: Agent with calculator tool
+        print("\n6. Testing agent with calculator tool...")
+        agent_prompt1 = "What is 123 * 456?"
+        agent_response1 = await manager.run_agent(agent_prompt1)
+        print(f"Agent Prompt: {agent_prompt1}")
+        print(f"Agent Response: {agent_response1}")
+        
+        # Test 7: Agent with search tool
+        print("\n7. Testing agent with search tool...")
+        agent_prompt2 = "What is the latest news about AI?"
+        agent_response2 = await manager.run_agent(agent_prompt2)
+        print(f"Agent Prompt: {agent_prompt2}")
+        print(f"Agent Response: {agent_response2}")
+        
     except Exception as e:
         print(f"\nError during testing: {str(e)}")
         raise
