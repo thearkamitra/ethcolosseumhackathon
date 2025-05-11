@@ -1,0 +1,85 @@
+@startuml Concierge Architecture
+
+!define RECTANGLE class
+
+skinparam backgroundColor white
+skinparam handwritten false
+skinparam defaultFontName Arial
+skinparam roundCorner 20
+skinparam shadowing false
+
+skinparam rectangle {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    FontColor Black
+}
+
+skinparam arrow {
+    Color DarkBlue
+    FontColor DarkBlue
+}
+
+title Concierge System Architecture
+
+package "Frontend" {
+    RECTANGLE "React + TypeScript" as React {
+        + Vite
+        + React Router
+        + TanStack Query
+    }
+    
+    RECTANGLE "UI Components" as UI {
+        + Radix UI
+        + Shadcn UI
+        + Tailwind CSS
+    }
+}
+
+package "Backend" {
+    RECTANGLE "FastAPI" as FastAPI {
+        + Uvicorn
+        + WebSockets
+    }
+    
+    RECTANGLE "AI/ML Services" as AI {
+        + LangChain
+        + Transformers
+        + PyTorch
+        + Ollama
+    }
+    
+    RECTANGLE "Audio Processing" as Audio {
+        + gTTS
+        + WebRTC VAD
+        + SoundDevice
+        + Faster-Whisper
+    }
+    
+    RECTANGLE "Communication" as Comm {
+        + Twilio
+        + WebSockets
+    }
+}
+
+package "Infrastructure" {
+    RECTANGLE "Docker" as Docker {
+        + Docker Compose
+    }
+    
+    RECTANGLE "Development" as Dev {
+        + Python venv
+        + Node.js/npm
+        + Makefile
+    }
+}
+
+React --> UI : uses
+FastAPI --> AI : integrates
+FastAPI --> Audio : processes
+FastAPI --> Comm : handles
+Docker --> FastAPI : containerizes
+Docker --> React : containerizes
+Dev --> FastAPI : develops
+Dev --> React : develops
+
+@enduml 

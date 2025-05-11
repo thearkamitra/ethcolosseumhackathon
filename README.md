@@ -1,4 +1,7 @@
 # Colosseum Hack ETH 
+
+![Concierge Architecture](docs/Concierge%20Architecture.png)
+
 This is the repository for Conversational Agentic AI that can be customized for different institutions.
 
 ## Project Structure

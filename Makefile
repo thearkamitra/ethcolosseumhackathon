@@ -1,4 +1,4 @@
-.PHONY: build run test clean pull-models download-whisper generate-test-audio
+.PHONY: build run test clean pull-models download-whisper generate-test-audio generate-diagram
 
 # Build the Docker containers
 build:
@@ -46,3 +46,7 @@ restart: stop run
 
 # Setup everything
 setup: build run-detached pull-models download-whisper 
+
+# Generate PlantUML diagrams
+generate-diagram:
+	plantuml architecture.puml 
