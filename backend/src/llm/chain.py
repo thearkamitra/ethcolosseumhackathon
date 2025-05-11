@@ -8,12 +8,15 @@ from collections import deque
 import aiohttp
 from .config import OllamaConfig
 from .tools import get_default_tools
+from langchain_core.outputs import ChatGeneration
+from langchain_core.messages import AIMessage
+from langchain.memory import ConversationBufferWindowMemory
 
 class LangChainManager:
     def __init__(self, config: Optional[OllamaConfig] = None, buffer_size: int = 5, tools: Optional[List] = None):
         self.config = config or OllamaConfig()
         self.llm = self._setup_llm()
-        self.conversation_buffer: Deque[str] = deque(maxlen=buffer_size)
+        self.conversation_buffer = ConversationBufferWindowMemory(k=5, return_messages=True)  # Set window size to 5
         self.agent = self._setup_agent(tools)
     
     def _setup_llm(self) -> Ollama:
@@ -28,19 +31,19 @@ class LangChainManager:
         )
     
     def _setup_agent(self, tools: Optional[List] = None) -> AgentExecutor:
-        """Initialize the agent with tools"""
         if tools is None:
             tools = get_default_tools()
-        
+
         prompt = ChatPromptTemplate.from_messages([
             ("system", "You are a helpful AI assistant with access to various tools. Use them when appropriate to help answer questions."),
-            MessagesPlaceholder(variable_name="chat_history"),
+            MessagesPlaceholder(variable_name="history"),
             ("human", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
         ])
-        
+
         agent = create_openai_tools_agent(self.llm, tools, prompt)
-        return AgentExecutor(agent=agent, tools=tools, verbose=True)
+        return AgentExecutor(agent=agent, tools=tools, memory=self.conversation_buffer, verbose=True)
+
     
     async def generate_response(self, prompt: str) -> str:
         """Generate a response using the LLM with conversation history"""
@@ -62,13 +65,15 @@ class LangChainManager:
             raise Exception(f"Error generating response: {str(e)}")
     
     async def run_agent(self, input_text: str) -> str:
-        """Run the agent with the given input"""
         try:
-            result = await self.agent.ainvoke({"input": input_text})
+            result = await self.agent.ainvoke({
+                "input": input_text
+            })
             return result["output"]
         except Exception as e:
             raise Exception(f"Error running agent: {str(e)}")
-    
+
+
     async def get_available_models(self) -> List[str]:
         """Get list of available Ollama models"""
         try:
@@ -80,4 +85,4 @@ class LangChainManager:
                     else:
                         raise Exception(f"Failed to fetch models: {response.status}")
         except Exception as e:
-            raise Exception(f"Error fetching available models: {str(e)}") 
+            raise Exception(f"Error fetching available models: {str(e)}")

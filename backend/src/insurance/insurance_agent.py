@@ -2,7 +2,7 @@ from typing import Dict, List, Optional
 from llm.chain import LangChainManager
 import json
 from llm.config import OllamaConfig
-from .language_utils import LanguageUtils, Language
+# from .language_utils import LanguageUtils, Language
 from .tools import (
     create_faq_tool,
     create_department_tool,
@@ -21,7 +21,6 @@ class InsuranceAgent:
         self.calendar_tool = create_calendar_tool()
         self.policy_tool = create_policy_tool(self.data["policies"])
         self.claim_tool = create_claim_tool(self.data)
-        self.language_utils = LanguageUtils()
         self.executer = LangChainManager(config=self.config, tools=[
             self.faq_tool,
             self.department_tool,
@@ -42,6 +41,6 @@ class InsuranceAgent:
             
     #     return self.language_utils.format_multilingual_response(responses)
     
-    def get_supported_languages(self) -> List[str]:
-        """Get list of supported languages."""
-        return list(self.language_utils.supported_languages.keys()) 
+    # def get_supported_languages(self) -> List[str]:
+    #     """Get list of supported languages."""
+    #     return list(self.language_utils.supported_languages.keys()) 
