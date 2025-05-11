@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
-from llm.chain import LangChainManager
+from src.llm.chain import LangChainManager
 import json
-from llm.config import OllamaConfig
+from src.llm.config import OllamaConfig
 # from .language_utils import LanguageUtils, Language
 from .tools import (
     create_faq_tool,

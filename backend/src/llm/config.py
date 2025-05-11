@@ -8,4 +8,5 @@ class OllamaConfig(BaseSettings):
     max_tokens: int = 2000
 
     class Config:
-        env_prefix = "OLLAMA_" 
+        env_prefix = "OLLAMA_"
+        protected_namespaces = ('settings_',) 

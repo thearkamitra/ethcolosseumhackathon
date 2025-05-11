@@ -9,7 +9,7 @@ class SearchInput(BaseModel):
 
 class WebSearchTool(BaseTool):
     name = "web_search"
-    description = "Useful for searching the web for current information"
+    description = "Useful for searching the web for current information. Input should be a search query."
     args_schema: Type[BaseModel] = SearchInput
 
     def _run(self, query: str) -> str:
@@ -20,11 +20,11 @@ class WebSearchTool(BaseTool):
         return self._run(query)
 
 class CalculatorInput(BaseModel):
-    expression: str = Field(description="The mathematical expression to evaluate")
+    expression: str = Field(description="The mathematical expression to evaluate. Only use basic arithmetic operations.")
 
 class CalculatorTool(BaseTool):
     name = "calculator"
-    description = "Useful for performing mathematical calculations"
+    description = "Useful for performing mathematical calculations. Input should be a mathematical expression using basic arithmetic operations (+, -, *, /, (, ))."
     args_schema: Type[BaseModel] = CalculatorInput
 
     def _run(self, expression: str) -> str:
@@ -32,9 +32,9 @@ class CalculatorTool(BaseTool):
             # Basic safety check - in production, use a proper safe eval
             allowed_chars = set("0123456789+-*/(). ")
             if not all(c in allowed_chars for c in expression):
-                return "Invalid expression"
+                return "Invalid expression: Only basic arithmetic operations are allowed"
             result = eval(expression)
-            return str(result)
+            return f"The result of {expression} is {result}"
         except Exception as e:
             return f"Error calculating: {str(e)}"
 
