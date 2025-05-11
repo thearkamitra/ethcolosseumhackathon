@@ -1,7 +1,7 @@
+import asyncio
 from src.insurance.insurance_agent import InsuranceAgent
 
-
-def main():
+async def main():
 
     agent = InsuranceAgent()
 
@@ -11,10 +11,10 @@ def main():
         if user_input.lower() == "exit":
             break
         try:
-            response = agent.run(user_input)
+            response = await agent.executer.run_agent(user_input)
             print(f"Agent: {response}")
         except Exception as e:
             print(f"Agent Error: {e}")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
